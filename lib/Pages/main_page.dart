@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:labs/Model/termin.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
+import '../Widgets/notifications.dart';
 import '../Widgets/nov_termin.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -9,8 +11,12 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
+  late DataSource _events;
+
   @override
   void initState() {
+    _events = DataSource(_termini);
+    Notifications.init(initScheduled: true);
     super.initState();
   }
 
@@ -47,13 +53,19 @@ class _MyHomePageState extends State<MyHomePage> {
   void _addNewTerminToList(Termin termin) {
     setState(() {
       _termini.add(termin);
+      _events = DataSource(_termini);
+      Notifications.scheduleNotification(
+        title: termin.predmet,
+        body: 'Your exam for the subject ${termin.predmet} is starting in 30 minutes!',
+        scheduledDate: termin.datumOd.subtract(Duration(minutes: 30)),
+      );
     });
   }
 
   void _deleteTermin(Object? id) {
     setState(() {
       _termini.removeWhere((element) => element.id == id);
-      // _events = DataSource(_termini);
+      _events = DataSource(_termini);
     });
   }
 
@@ -74,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Column(
               children: [
                 Container(
-                  height: 800,
+                  height: 400,
                   child: _termini.isEmpty
                       ? Text("No schedules")
                       : ListView.builder(
@@ -92,10 +104,42 @@ class _MyHomePageState extends State<MyHomePage> {
                       },
                       itemCount: _termini.length),
                 ),
+                SfCalendar(
+                  view: CalendarView.month,
+                  initialSelectedDate: DateTime.now(),
+                  cellBorderColor: Colors.transparent,
+                  dataSource: _events,
+                ),
               ],
             )
         ),
         )
     );
+  }
+}
+
+class DataSource extends CalendarDataSource {
+  DataSource(List<Termin> source) {
+    appointments = source;
+  }
+
+  @override
+  DateTime getStartTime(int index) {
+    return appointments![index].datumOd;
+  }
+
+  @override
+  DateTime getEndTime(int index) {
+    return appointments![index].datumDo;
+  }
+
+  @override
+  String getSubject(int index) {
+    return appointments![index].predmet as String;
+  }
+
+  @override
+  Object? getId(int index) {
+    return appointments![index].id;
   }
 }
