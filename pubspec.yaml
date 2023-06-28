@@ -36,10 +36,12 @@ dependencies:
 
   intl: ^0.18.1
   provider: ^5.0.0
-  syncfusion_flutter_calendar: ^21.2.10
+  syncfusion_flutter_calendar: ^22.1.36
   flutter_local_notifications: ^13.0.0
   timezone: ^0.9.1
   flutter_native_timezone: ^2.0.0
+
+  syncfusion_flutter_maps: ^22.1.36
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

@@ -17,6 +17,8 @@ class _NovTerminState extends State<NovTermin> {
   final _predmetController = TextEditingController();
   final _datumOdController = TextEditingController();
   final _datumDoController = TextEditingController();
+  final _latitudeController = TextEditingController();
+  final _longitudeController = TextEditingController();
 
   void _submitData() {
     if (_datumOdController.text.isEmpty && _datumDoController.text.isEmpty) {
@@ -25,13 +27,15 @@ class _NovTerminState extends State<NovTermin> {
     var novDatumOd = DateTime.parse(_datumOdController.text);
     var novDatumDo = DateTime.parse(_datumDoController.text);
     var novPredmet = _predmetController.text;
+    var novLatitude = double.parse(_latitudeController.text);
+    var novLongitude = double.parse(_longitudeController.text);
 
     if (novPredmet.isEmpty) {
       return;
     }
 
     var newItem =
-    Termin(id: nanoid(5), predmet: novPredmet, datumOd: novDatumOd, datumDo: novDatumDo);
+    Termin(id: nanoid(5), predmet: novPredmet, datumOd: novDatumOd, datumDo: novDatumDo, latitude: novLatitude, longitude: novLongitude);
     widget.addTermin(newItem);
     Navigator.of(context).pop();
   }
@@ -57,6 +61,16 @@ class _NovTerminState extends State<NovTermin> {
               controller: _datumDoController,
               decoration: InputDecoration(labelText: "Datum Do: "),
               keyboardType: TextInputType.datetime,
+              onSubmitted: (_) => _submitData(),
+            ),
+            TextField(
+              controller: _latitudeController,
+              decoration: InputDecoration(labelText: "Latitude: "),
+              onSubmitted: (_) => _submitData(),
+            ),
+            TextField(
+              controller: _longitudeController,
+              decoration: InputDecoration(labelText: "Longitude: "),
               onSubmitted: (_) => _submitData(),
             ),
             IconButton(onPressed: () => _submitData(), icon: Icon(Icons.save))
